@@ -1,0 +1,29 @@
+body {
+    height: 100vh;
+    background:
+            linear-gradient(
+                    rgba(0, 0, 0, 0.45),
+                    rgba(0, 0, 0, 0.45)
+            ),
+            url("https://images.unsplash.com/photo-1639847165103-8bb2b030f96c?q=80&w=1600&auto=format&fit=crop")
+            no-repeat center center fixed;
+    background-size: cover;
+}
+
+.cover-container {
+    max-width: 60vw;
+}
+
+.nav-masthead .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    margin-left: 1rem;
+}
+
+.nav-masthead .nav-link:hover {
+    color: #fff;
+}
+
+.nav-masthead .active {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+}

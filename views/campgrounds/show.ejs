@@ -1,0 +1,122 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-5">
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="card mb-3 shadow-sm">
+
+                <% if (campground.images && campground.images.length) { %>
+                    <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <% campground.images.forEach((img, i) => { %>
+                                <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                                    <img src="<%= img.url %>" class="d-block w-100" alt="">
+                                </div>
+                            <% }) %>
+                        </div>
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+                <% } %>
+
+                <div class="card-body">
+                    <h3 class="card-title"><%= campground.title %></h3>
+                    <p class="card-text"><%= campground.description %></p>
+                    <p class="text-muted"><%= campground.location %></p>
+                    <h5>$<%= campground.price %>/night</h5>
+
+                    <% if (currentUser && campground.author && campground.author.equals(currentUser._id)) { %>
+                        <div class="d-flex justify-content-between mt-3">
+                            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-info">Edit</a>
+                            <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <a href="/campgrounds" class="btn btn-secondary mb-4">Back to Campgrounds</a>
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body p-0">
+                    <div id="map" style="width:100%; height:300px;"></div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h4>Leave a Review</h4>
+                    <form action="/campgrounds/<%= campground._id %>/reviews" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <input type="range" min="1" max="5" name="review[rating]" class="form-range">
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="review[body]" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button class="btn btn-success w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+            <% if (campground.reviews && campground.reviews.length) { %>
+                <% campground.reviews.forEach(review => { %>
+                    <div class="card mb-2 shadow-sm">
+                        <div class="card-body">
+                            <p><strong>User:</strong> <%= review.author ? review.author.username : 'Unknown User' %></p>
+                            <p><strong>Rating:</strong> <%= review.rating %> / 5</p>
+                            <p><%= review.body %></p>
+
+                            <% if (currentUser && review.author && review.author.equals(currentUser._id)) { %>
+                                <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="text-end">
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="text-muted">No reviews yet.</p>
+            <% } %>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const mapToken = '<%= process.env.MAPBOX_TOKEN %>';
+    const campgroundData = <%- JSON.stringify(campground) %>;
+</script>
+
+<script>
+        if (campgroundData.geometry && campgroundData.geometry.coordinates) {
+        mapboxgl.accessToken = mapToken;
+
+        const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: campgroundData.geometry.coordinates,
+        zoom: 9
+    });
+
+        new mapboxgl.Marker()
+        .setLngLat(campgroundData.geometry.coordinates)
+        .setPopup(
+        new mapboxgl.Popup({ offset: 25 })
+        .setText(campgroundData.location)
+        )
+        .addTo(map);
+    } else {
+        console.warn('No geometry for this campground');
+    }
+</script>

@@ -1,0 +1,66 @@
+<% layout('layouts/boilerplate') %>
+<div class="row justify-content-center mt-6">
+    <div class="col-md-6">
+        <h1 class="text-center mb-2">New Campground</h1>
+
+        <form action="/campgrounds" method="POST" novalidate class="form-validate" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input id="title" name="campground[title]" type="text" class="form-control" placeholder="Enter campground title" required>
+                <div class="valid-feedback">Success!</div>
+                <div class="invalid-feedback">Please provide a valid title.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input id="location" name="campground[location]" type="text" class="form-control" placeholder="City, Country" required>
+                <div class="valid-feedback">Success!</div>
+                <div class="invalid-feedback">Please provide a valid city.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input id="price" name="campground[price]" type="number" step="0.01" class="form-control" placeholder="0.00" required>
+                    <div class="valid-feedback">Success!</div>
+                    <div class="invalid-feedback">Please provide price.</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload Images</label>
+                <input id="image" type="file" name="image" class="form-control" multiple>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="campground[description]" rows="2" class="form-control" placeholder="Write a short description..."></textarea>
+            </div>
+
+            <div class="d-grid gap-2 mb-3">
+                <button type="submit" class="btn btn-success">Add Campground</button>
+            </div>
+
+            <div class="text-right">
+                <a href="/campgrounds" class="btn btn-secondary">Back to All Campgrounds</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.form-validate')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
