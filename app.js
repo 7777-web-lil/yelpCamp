@@ -141,6 +141,8 @@ const {status= 500, message = 'something happened'}=err;
 
 
 
-app.listen(3000, () => {
-   console.log('lilian port 3000 is listening')
-})
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+});
